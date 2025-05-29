@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Login Test</title>
+</head>
+<body>
+<h2>Login Formu</h2>
+<form id="loginForm">
+    <label for="username">Kullanıcı Adı:</label>
+    <input type="text" id="username" required><br><br>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" required><br><br>
+
+    <label for="password">Şifre:</label>
+    <input type="password" id="password" required><br><br>
+
+    <button type="submit">Giriş Yap</button>
+</form>
+
+<p id="result"></p>
+
+<script>
+    document.getElementById("loginForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const data = {
+            username: document.getElementById("username").value,
+            email: document.getElementById("email").value,
+            password: document.getElementById("password").value
+        };
+
+        fetch("http://localhost:8080/api/auth/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text) });
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById("result").innerText = "Başarılı! Access Token: " + data.accessToken;
+            })
+            .catch(error => {
+                document.getElementById("result").innerText = "Hata: " + error.message;
+            });
+    });
+</script>
+</body>
+</html>
